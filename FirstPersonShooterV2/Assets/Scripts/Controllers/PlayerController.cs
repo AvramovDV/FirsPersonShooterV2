@@ -19,6 +19,7 @@ public class PlayerController : BaseController
     public PlayerController()
     {
         _model = Object.FindObjectOfType<PlayerModel>();
+        Cursor.lockState = CursorLockMode.Locked;
         On();
     }
 

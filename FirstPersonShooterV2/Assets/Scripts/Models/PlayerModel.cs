@@ -9,6 +9,7 @@ public class PlayerModel : MonoBehaviour
     [SerializeField] private CharacterController _characterController;
     [SerializeField] private Transform _cameraTransform;
     [SerializeField] private Transform _transform;
+    [SerializeField] private Transform _weaponPoint;
     [SerializeField] private float _speed;
     [SerializeField] private float _mass;
     [SerializeField] private float _jump;
@@ -22,6 +23,7 @@ public class PlayerModel : MonoBehaviour
 
     #region Propeties
 
+    public Transform WeaponPoint { get => _weaponPoint; }
     public Vector3 Forward { get => _transform.forward; }
     public Vector3 Right { get => _transform.right; }
     public float Speed { get => _speed; }
