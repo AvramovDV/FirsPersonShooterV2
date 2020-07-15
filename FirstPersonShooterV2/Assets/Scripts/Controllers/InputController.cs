@@ -51,7 +51,7 @@ public class InputController : BaseController
 
         if (Input.GetKeyDown(_reloadGunKey))
         {
-            ServiceLocator.GetService<InventoryController>().StartReload();
+            ServiceLocator.GetService<WeaponController>().Reload();
         }
 
         if (Input.GetKeyDown(_dropDownGunKey))

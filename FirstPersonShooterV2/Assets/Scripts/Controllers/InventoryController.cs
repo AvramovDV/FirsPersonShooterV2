@@ -24,6 +24,7 @@ public class InventoryController : BaseController
     #region Propeties
 
     public BaseWeaponModel ChoosenWeapon { get => _choosenWeapon; }
+    public Dictionary<BulletType, int> Bullets { get => _bullets; }
 
     #endregion
 
@@ -92,36 +93,7 @@ public class InventoryController : BaseController
             return;
         }
 
-        _bulletsUImodel.SetBulletsCount($"{_choosenWeapon.Bullets} / {_bullets[_choosenWeapon.BulletType]}");
-    }
-
-    public void StartReload()
-    {
-        if (_choosenWeapon != null && !_isReloading)
-        {
-            if (_bullets[_choosenWeapon.BulletType] > 0 && _choosenWeapon.Bullets < _choosenWeapon.MaxBullets)
-            {
-                _isReloading = true;
-                new TimeController(Reload, 1f / _choosenWeapon.ReloadSpeed, false);
-                ServiceLocator.GetService<WeaponController>().Wait(1f / _choosenWeapon.ReloadSpeed);
-            }
-
-        }
-    }
-
-    private void Reload()
-    {
-        for (int i = 0; i < _choosenWeapon.MaxBullets; i++)
-        {
-            _choosenWeapon.Bullets++;
-            _bullets[_choosenWeapon.BulletType]--;
-
-            if (_bullets[_choosenWeapon.BulletType] == 0 || _choosenWeapon.Bullets == _choosenWeapon.MaxBullets)
-            {
-                break;
-            }
-        }
-        _isReloading = false;
+        _bulletsUImodel.SetBulletsCount($"{_choosenWeapon.BulletType}:\n {_choosenWeapon.Bullets} / {_bullets[_choosenWeapon.BulletType]}");
     }
 
     public void DropDownWeapon()
