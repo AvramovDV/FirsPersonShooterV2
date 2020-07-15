@@ -115,5 +115,39 @@ public class InventoryController : BaseController
         }
     }
 
+    public void ChooseWeapon(int number, bool concrete = true)
+    {
+        if (_choosenWeapon == null)
+        {
+            return;
+        }
+        if (concrete)
+        {
+            if (number < _weapons.Count)
+            {
+                _choosenWeapon.gameObject.SetActive(false);
+                _choosenWeapon = _weapons[number];
+                _choosenWeapon.gameObject.SetActive(true);
+            }
+        }
+        else
+        {
+            int index = _weapons.IndexOf(_choosenWeapon) + number;
+            if (index >= _weapons.Count)
+            {
+                index = 0;
+            }
+            if (index < 0)
+            {
+                index = _weapons.Count - 1;
+            }
+
+            _choosenWeapon.gameObject.SetActive(false);
+            _choosenWeapon = _weapons[index];
+            _choosenWeapon.gameObject.SetActive(true);
+
+        }
+    }
+
     #endregion
 }
