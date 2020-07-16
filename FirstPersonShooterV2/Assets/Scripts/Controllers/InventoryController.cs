@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 
@@ -51,37 +52,41 @@ public class InventoryController : BaseController
 
     public void AddWeapon(BaseWeaponModel weapon)
     {
-        _weapons.Add(weapon);
-
-        weapon.RigidBody.isKinematic = true;
-        weapon.transform.position = _weaponPoint.position;
-        weapon.transform.rotation = _weaponPoint.rotation;
-        weapon.transform.SetParent(_weaponPoint);
-
-        if (_choosenWeapon == null)
+        if (_weapons.Find(w => w.BulletType == weapon.BulletType))
         {
-            _choosenWeapon = weapon;
+            AddBullets(weapon.BulletType, weapon.Bullets);
+            GameObject.Destroy(weapon.gameObject);
         }
         else
         {
-            weapon.gameObject.SetActive(false);
-        }
+            _weapons.Add(weapon);
 
-        if (!_bullets.ContainsKey(weapon.BulletType))
-        {
-            _bullets.Add(weapon.BulletType, 0);
+            weapon.RigidBody.isKinematic = true;
+            weapon.transform.position = _weaponPoint.position;
+            weapon.transform.rotation = _weaponPoint.rotation;
+            weapon.transform.SetParent(_weaponPoint);
+
+            if (_choosenWeapon == null)
+            {
+                _choosenWeapon = weapon;
+            }
+            else
+            {
+                weapon.gameObject.SetActive(false);
+            }
+            AddBullets(weapon.BulletType, 0);
         }
     }
 
-    public void AddBullets(BulletsMagazineModel bullets)
+    public void AddBullets(BulletType type, int count)
     {
-        if (_bullets.ContainsKey(bullets.BulletType))
+        if (_bullets.ContainsKey(type))
         {
-            _bullets[bullets.BulletType] += bullets.BulletCount;
+            _bullets[type] += count;
         }
         else
         {
-            _bullets.Add(bullets.BulletType, bullets.BulletCount);
+            _bullets.Add(type, count);
         }
     }
 
@@ -126,7 +131,7 @@ public class InventoryController : BaseController
             if (number < _weapons.Count)
             {
                 _choosenWeapon.gameObject.SetActive(false);
-                _choosenWeapon = _weapons[number];
+                _choosenWeapon = _weapons.ToList()[number];
                 _choosenWeapon.gameObject.SetActive(true);
             }
         }

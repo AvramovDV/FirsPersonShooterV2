@@ -34,7 +34,7 @@ public class BulletsMagazineModel : MonoBehaviour, ISelectable, IInteractable
 
     public void Interact()
     {
-        ServiceLocator.GetService<InventoryController>().AddBullets(this);
+        ServiceLocator.GetService<InventoryController>().AddBullets(_bulletType, _bulletCount);
         Destroy(gameObject);
     }
 
