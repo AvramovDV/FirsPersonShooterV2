@@ -30,6 +30,11 @@ public class BulletModel : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
+        ISetDamege target = collision.gameObject.GetComponent<ISetDamege>();
+        if (target != null)
+        {
+            target.SetDamage(Damage);
+        }
         Destroy(gameObject);
     }
 

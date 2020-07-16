@@ -45,6 +45,11 @@ public class GrenadeBulletModel : MonoBehaviour
             {
                 colliders[i].GetComponent<Rigidbody>().AddForce(colliders[i].transform.position - _rigidbody.position * _explosionForce);
             }
+            ISetDamege target = colliders[i].GetComponent<ISetDamege>();
+            if (target != null)
+            {
+                target.SetDamage(Damage);
+            }
         }
         Instantiate(_explosion, _rigidbody.position, _transform.rotation);
         Destroy(gameObject);
