@@ -39,6 +39,7 @@ public class BulletModel : MonoBehaviour
         GameObject holePrefub = Resources.Load<GameObject>(StaticData.BulletHolePath);
         GameObject hole = Instantiate(holePrefub, collision.GetContact(0).point, Quaternion.FromToRotation(Vector3.back, collision.GetContact(0).normal));
         hole.transform.position -= hole.transform.forward * 0.4f;
+        hole.transform.parent = collision.transform;
 
         Destroy(hole, 20f);
 
