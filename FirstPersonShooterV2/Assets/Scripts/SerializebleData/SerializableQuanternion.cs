@@ -2,7 +2,7 @@
 using UnityEngine;
 
 [Serializable]
-public class SerializableQuanternion
+public struct SerializableQuanternion
 {
     #region Fields
 

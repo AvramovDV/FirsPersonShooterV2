@@ -3,7 +3,7 @@ using UnityEngine;
 
 
 [Serializable]
-public class SerializableObject
+public struct SerializableObject
 {
     #region Fields
 

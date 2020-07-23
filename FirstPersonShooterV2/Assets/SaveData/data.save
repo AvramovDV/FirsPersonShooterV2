@@ -1,1 +1,21 @@
-{"Name":"Player","Position":{"X":6.256419658660889,"Y":10.079999923706055,"Z":3.7465453147888185},"Rotation":{"X":0.0,"Y":0.827080488204956,"Z":0.0,"W":0.5620835423469544},"Scale":{"X":1.0,"Y":1.0,"Z":1.0},"IsEnable":true}
+<?xml version="1.0"?>
+<SerializableObject xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Name>Player</Name>
+  <Position>
+    <X>0.3368989</X>
+    <Y>10.08</Y>
+    <Z>3.19961143</Z>
+  </Position>
+  <Rotation>
+    <X>0</X>
+    <Y>-0.0305384789</Y>
+    <Z>0</Z>
+    <W>0.9995336</W>
+  </Rotation>
+  <Scale>
+    <X>1</X>
+    <Y>1</Y>
+    <Z>1</Z>
+  </Scale>
+  <IsEnable>true</IsEnable>
+</SerializableObject>

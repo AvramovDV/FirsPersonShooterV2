@@ -21,7 +21,8 @@ public class SaveLoadController : BaseController
     public SaveLoadController()
     {
         //_data = new BInaryFormater<SerializableObject>();
-        _data = new JSON<SerializableObject>();
+        //_data = new JSON<SerializableObject>();
+        _data = new XMLdata<SerializableObject>();
         _path = Path.Combine(Application.dataPath, _folderName);
     }
 
