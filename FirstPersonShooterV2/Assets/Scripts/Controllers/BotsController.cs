@@ -11,6 +11,13 @@ public class BotsController : BaseController
     private List<BotModel> _bots;
     private GameObject _botPrefub;
 
+    private int _botsCount = 20;
+    private int _currentPath = 0;
+
+    private TimeController _timeController;
+
+    private Queue<BotModel> _resetBots;
+
     #endregion
 
 
@@ -63,19 +70,41 @@ public class BotsController : BaseController
     private void SetBots()
     {
         _botPrefub = Resources.Load<GameObject>(StaticData.BotPrefubPath);
-        _bots = new List<BotModel>();
+        _bots = new List<BotModel>(_botsCount);
+        _resetBots = new Queue<BotModel>(_botsCount);
 
-        for (int i = 0; i < _paths.Count; i++)
+        for (int i = 0; i < _botsCount; i++)
         {
-            BotModel bot = GameObject.Instantiate(_botPrefub, _paths[i][0], _botPrefub.transform.rotation).GetComponent<BotModel>();
-            bot.Path = _paths[i];
+            BotModel bot = GameObject.Instantiate(_botPrefub, _paths[_currentPath][0], _botPrefub.transform.rotation).GetComponent<BotModel>();
+            bot.Path = _paths[_currentPath];
             _bots.Add(bot);
+            _currentPath++;
+            if (_currentPath >= _paths.Count)
+            {
+                _currentPath = 0;
+            }
         }
     }
 
     public void RemoveBot(BotModel bot)
     {
-        _bots.Remove(bot);
+        //_bots.Remove(bot);
+        _resetBots.Enqueue(bot);
+        new TimeController(ResetBot, bot.DieTime, false);
+    }
+
+    private void ResetBot()
+    {
+        BotModel bot = _resetBots.Dequeue();
+        bot.Path = _paths[_currentPath];
+        bot.Agent.Warp(bot.Path[0]);
+        bot.SwitchState(BotState.None);
+
+        _currentPath++;
+        if (_currentPath >= _paths.Count)
+        {
+            _currentPath = 0;
+        }
     }
 
     #endregion

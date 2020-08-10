@@ -7,12 +7,21 @@ public class SelectionController : BaseController
 
     private Camera _camera;
     private Vector2 _center;
+    private Transform _cameraTransform;
 
     private GameObject _selection;
 
     private SelectionModel _model;
 
-    private float _rayLenght = 20f;
+    private float _rayLenght = 100f;
+    private float _interactDistance = 20f;
+
+    #endregion
+
+
+    #region Propeties
+
+    public Vector3 HitPoint { get; private set; }
 
     #endregion
 
@@ -23,6 +32,7 @@ public class SelectionController : BaseController
     {
         _camera = Camera.main;
         _center = new Vector2(Screen.width / 2f, Screen.height / 2f);
+        _cameraTransform = _camera.transform;
 
         _model = Object.FindObjectOfType<SelectionModel>();
 
@@ -42,12 +52,14 @@ public class SelectionController : BaseController
 
     public void SelectionLogic()
     {
-        if (Physics.Raycast(_camera.ScreenPointToRay(_center), out var hit, _rayLenght))
+        Ray ray = new Ray(_cameraTransform.position, _cameraTransform.forward);
+        if (Physics.Raycast(ray, out var hit, _rayLenght))
         {
             _selection = hit.collider.gameObject;
+            HitPoint = hit.point;
             ISelectable target = _selection.GetComponent<ISelectable>();
             IInteractable interactionTarget = _selection.GetComponent<IInteractable>();
-            if (target != null)
+            if (target != null && (HitPoint - _cameraTransform.position).sqrMagnitude <= _interactDistance * _interactDistance)
             {
                 if (interactionTarget != null)
                 {
@@ -63,6 +75,10 @@ public class SelectionController : BaseController
             {
                 _model.SetMessage("");
             }
+        }
+        else
+        {
+            HitPoint = ray.GetPoint(_rayLenght);
         }
     }
 

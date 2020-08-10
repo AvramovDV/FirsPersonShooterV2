@@ -7,16 +7,21 @@ public class BotModel : MonoBehaviour
 {
     #region Fields
 
+    public Action OnStateChanged = delegate { };
+
     [SerializeField] private Transform _transform;
     [SerializeField] private NavMeshAgent _agent;
-    [SerializeField] private Rigidbody _botBody;
-    [SerializeField] private Rigidbody _botHead;
-    [SerializeField] private Rigidbody _botWeapon;
+    //[SerializeField] private Rigidbody _botBody;
+    //[SerializeField] private Rigidbody _botHead;
+    //[SerializeField] private Rigidbody _botWeapon;
+    [SerializeField] private Animator _animator;
 
     [SerializeField] private float _health;
     [SerializeField] private float _damage;
     [SerializeField] private float _lookAroundTime;
     [SerializeField] private float _rotationSpeed;
+    [SerializeField] private float _walkSpeed;
+    [SerializeField] private float _runSpeed;
 
     [SerializeField] private float _seingDistance;
     [SerializeField] private float _seingAngle;
@@ -40,8 +45,22 @@ public class BotModel : MonoBehaviour
 
     #region Propeties
 
+    public BotState BotState 
+    { 
+        get => _botSate;
+        set
+        {
+            if (_botSate != value)
+            {
+                _botSate = value;
+                OnStateChanged.Invoke();
+            }
+        }
+    }
     public Dictionary<BotState, Action> State { get => _state; }
     public List<Vector3> Path { get; set; }
+    public float DieTime { get => _dieTime; }
+    public NavMeshAgent Agent { get => _agent; }
 
     #endregion
 
@@ -72,7 +91,8 @@ public class BotModel : MonoBehaviour
         _state = new Dictionary<BotState, Action>();
         _state.Add(BotState.None, None);
         _state.Add(BotState.Patrul, Patrul);
-        _state.Add(BotState.LookAround, LookAround);
+        _state.Add(BotState.LookRight, LookRight);
+        _state.Add(BotState.LookLeft, LookLeft);
         _state.Add(BotState.TargetFollow, TargetFollow);
         _state.Add(BotState.Die, Die);
     }
@@ -86,25 +106,52 @@ public class BotModel : MonoBehaviour
         }
     }
 
-    private void SwitchState(BotState state)
+    public void SwitchState(BotState state)
     {
         _isStateEntered = false;
         _localTimer = 0f;
-        _botSate = state;
+        BotState = state;
     }
 
     private void None()
     {
-        SwitchState(BotState.LookAround);
+        LookAround();
     }
 
     private void LookAround()
     {
-        if (!_isStateEntered)
+        _rotationSpeed *= Mathf.Sign(UnityEngine.Random.Range(-1f, 1f));
+        if (_rotationSpeed < 0f)
         {
-            _rotationSpeed *= Mathf.Sign(UnityEngine.Random.Range(-1f, 1f));
-            _isStateEntered = true;
+            SwitchState(BotState.LookLeft);
         }
+        else
+        {
+            SwitchState(BotState.LookRight);
+        }
+
+    }
+
+    private void LookRight()
+    {
+        if (_localTimer < _lookAroundTime)
+        {
+            _transform.Rotate(Vector3.up * _rotationSpeed * Time.deltaTime);
+            _localTimer += Time.deltaTime;
+        }
+        else
+        {
+            SwitchState(BotState.Patrul);
+        }
+
+        if (IsPlayerHere())
+        {
+            SwitchState(BotState.TargetFollow);
+        }
+    }
+
+    private void LookLeft()
+    {
         if (_localTimer < _lookAroundTime)
         {
             _transform.Rotate(Vector3.up * _rotationSpeed * Time.deltaTime);
@@ -127,13 +174,13 @@ public class BotModel : MonoBehaviour
         {
             _agent.SetDestination(_transform.position);
 
-            _botBody.isKinematic = false;
-            _botHead.isKinematic = false;
-            _botWeapon.isKinematic = false;
+            //_botBody.isKinematic = false;
+            //_botHead.isKinematic = false;
+            //_botWeapon.isKinematic = false;
 
             ServiceLocator.GetService<BotsController>().RemoveBot(this);
 
-            Destroy(gameObject, _dieTime);
+            //Destroy(gameObject, _dieTime);
 
             _isStateEntered = true;
         }
@@ -153,19 +200,25 @@ public class BotModel : MonoBehaviour
                 _agent.SetDestination(Path[_currentPoint]);
             }
             _isStateEntered = true;
+            _agent.speed = _walkSpeed;
         }
         if (IsPlayerHere())
         {
             SwitchState(BotState.TargetFollow);
         }
-        if (!_agent.hasPath)
+        if (!_agent.hasPath && !_agent.pathPending)
         {
-            SwitchState(BotState.LookAround);
+            LookAround();
         }
     }
 
     private void TargetFollow()
     {
+        if (!_isStateEntered)
+        {
+            _agent.speed = _runSpeed;
+            _isStateEntered = true;
+        }
         if (IsPlayerHere())
         {
             _agent.SetDestination(_playerTransform.position);

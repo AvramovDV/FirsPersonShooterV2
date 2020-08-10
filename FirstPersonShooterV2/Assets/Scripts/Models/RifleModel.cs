@@ -9,7 +9,8 @@ public class RifleModel : BaseWeaponModel, ISelectable, IInteractable
     {
         if (Bullets > 0 && CanFire)
         {
-            BulletModel bullet = Instantiate(BulletPrefub, FirePoint.position, FirePoint.rotation).GetComponent<BulletModel>();
+            Vector3 dir = ServiceLocator.GetService<SelectionController>().HitPoint - FirePoint.position;
+            BulletModel bullet = Instantiate(BulletPrefub, FirePoint.position, Quaternion.LookRotation(dir)).GetComponent<BulletModel>();
             bullet.Damage = Damage;
             Bullets--;
             SwitchCanFire();

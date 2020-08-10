@@ -2,7 +2,8 @@
 {
     None = 0,
     Patrul = 1,
-    LookAround = 2,
-    TargetFollow = 3,
-    Die = 4
+    LookRight = 2,
+    LookLeft = 3,
+    TargetFollow = 4,
+    Die = 5,
 }

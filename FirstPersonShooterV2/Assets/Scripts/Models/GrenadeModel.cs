@@ -17,7 +17,7 @@ public class GrenadeModel : BaseWeaponModel, ISelectable, IInteractable
         if (CanFire)
         {
             GameObject a = Instantiate(BulletPrefub, FirePoint.position, FirePoint.rotation);
-            Vector3 direction = Vector3.Lerp(FirePoint.forward, FirePoint.up, 0.5f);
+            Vector3 direction = Vector3.Lerp(FirePoint.forward, FirePoint.up, 0.25f);
             a.GetComponent<Rigidbody>().AddForce(direction * _dropForce);
             a.GetComponent<GrenadeBulletModel>().Damage = Damage;
             Bullets--;
