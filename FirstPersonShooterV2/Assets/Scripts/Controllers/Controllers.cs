@@ -14,6 +14,7 @@ public class Controllers
         ServiceLocator.SetService<InventoryController>(new InventoryController());
         ServiceLocator.SetService<WeaponController>(new WeaponController());
         ServiceLocator.SetService<BotsController>(new BotsController());
+        ServiceLocator.SetService<SaveLoadController>(new SaveLoadController());
     }
 
     #endregion

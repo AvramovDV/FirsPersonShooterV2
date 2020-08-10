@@ -14,6 +14,9 @@ public class InputController : BaseController
     private KeyCode _weaponThreeKey = KeyCode.Alpha3;
     private KeyCode _weaponFourKey = KeyCode.Alpha4;
 
+    private KeyCode _savePlayerDataKey = KeyCode.V;
+    private KeyCode _loadPlayerDataKey = KeyCode.B;
+
     private MouseButton _fireButton = MouseButton.Left;
 
     #endregion
@@ -66,6 +69,8 @@ public class InputController : BaseController
 
         WeaponChoosing();
 
+        SaveLoad();
+
     }
 
     private void WeaponChoosing()
@@ -100,6 +105,19 @@ public class InputController : BaseController
             {
                 ServiceLocator.GetService<InventoryController>().ChooseWeapon(-1, false);
             }
+        }
+    }
+
+    private void SaveLoad()
+    {
+        if (Input.GetKeyDown(_savePlayerDataKey))
+        {
+            ServiceLocator.GetService<SaveLoadController>().Save();
+        }
+
+        if (Input.GetKeyDown(_loadPlayerDataKey))
+        {
+            ServiceLocator.GetService<SaveLoadController>().Load();
         }
     }
 
