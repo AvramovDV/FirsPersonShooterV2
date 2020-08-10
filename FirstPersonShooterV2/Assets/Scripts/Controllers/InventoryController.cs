@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 
@@ -24,6 +25,7 @@ public class InventoryController : BaseController
     #region Propeties
 
     public BaseWeaponModel ChoosenWeapon { get => _choosenWeapon; }
+    public Dictionary<BulletType, int> Bullets { get => _bullets; }
 
     #endregion
 
@@ -50,37 +52,41 @@ public class InventoryController : BaseController
 
     public void AddWeapon(BaseWeaponModel weapon)
     {
-        _weapons.Add(weapon);
-
-        weapon.RigidBody.isKinematic = true;
-        weapon.transform.position = _weaponPoint.position;
-        weapon.transform.rotation = _weaponPoint.rotation;
-        weapon.transform.SetParent(_weaponPoint);
-
-        if (_choosenWeapon == null)
+        if (_weapons.Find(w => w.BulletType == weapon.BulletType))
         {
-            _choosenWeapon = weapon;
+            AddBullets(weapon.BulletType, weapon.Bullets);
+            GameObject.Destroy(weapon.gameObject);
         }
         else
         {
-            weapon.gameObject.SetActive(false);
-        }
+            _weapons.Add(weapon);
 
-        if (!_bullets.ContainsKey(weapon.BulletType))
-        {
-            _bullets.Add(weapon.BulletType, 0);
+            weapon.RigidBody.isKinematic = true;
+            weapon.transform.position = _weaponPoint.position;
+            weapon.transform.rotation = _weaponPoint.rotation;
+            weapon.transform.SetParent(_weaponPoint);
+
+            if (_choosenWeapon == null)
+            {
+                _choosenWeapon = weapon;
+            }
+            else
+            {
+                weapon.gameObject.SetActive(false);
+            }
+            AddBullets(weapon.BulletType, 0);
         }
     }
 
-    public void AddBullets(BulletsMagazineModel bullets)
+    public void AddBullets(BulletType type, int count)
     {
-        if (_bullets.ContainsKey(bullets.BulletType))
+        if (_bullets.ContainsKey(type))
         {
-            _bullets[bullets.BulletType] += bullets.BulletCount;
+            _bullets[type] += count;
         }
         else
         {
-            _bullets.Add(bullets.BulletType, bullets.BulletCount);
+            _bullets.Add(type, count);
         }
     }
 
@@ -92,36 +98,7 @@ public class InventoryController : BaseController
             return;
         }
 
-        _bulletsUImodel.SetBulletsCount($"{_choosenWeapon.Bullets} / {_bullets[_choosenWeapon.BulletType]}");
-    }
-
-    public void StartReload()
-    {
-        if (_choosenWeapon != null && !_isReloading)
-        {
-            if (_bullets[_choosenWeapon.BulletType] > 0 && _choosenWeapon.Bullets < _choosenWeapon.MaxBullets)
-            {
-                _isReloading = true;
-                new TimeController(Reload, 1f / _choosenWeapon.ReloadSpeed, false);
-                ServiceLocator.GetService<WeaponController>().Wait(1f / _choosenWeapon.ReloadSpeed);
-            }
-
-        }
-    }
-
-    private void Reload()
-    {
-        for (int i = 0; i < _choosenWeapon.MaxBullets; i++)
-        {
-            _choosenWeapon.Bullets++;
-            _bullets[_choosenWeapon.BulletType]--;
-
-            if (_bullets[_choosenWeapon.BulletType] == 0 || _choosenWeapon.Bullets == _choosenWeapon.MaxBullets)
-            {
-                break;
-            }
-        }
-        _isReloading = false;
+        _bulletsUImodel.SetBulletsCount($"{_choosenWeapon.BulletType}:\n {_choosenWeapon.Bullets} / {_bullets[_choosenWeapon.BulletType]}");
     }
 
     public void DropDownWeapon()
@@ -140,6 +117,40 @@ public class InventoryController : BaseController
             {
                 _choosenWeapon = null;
             }
+        }
+    }
+
+    public void ChooseWeapon(int number, bool concrete = true)
+    {
+        if (_choosenWeapon == null)
+        {
+            return;
+        }
+        if (concrete)
+        {
+            if (number < _weapons.Count)
+            {
+                _choosenWeapon.gameObject.SetActive(false);
+                _choosenWeapon = _weapons.ToList()[number];
+                _choosenWeapon.gameObject.SetActive(true);
+            }
+        }
+        else
+        {
+            int index = _weapons.IndexOf(_choosenWeapon) + number;
+            if (index >= _weapons.Count)
+            {
+                index = 0;
+            }
+            if (index < 0)
+            {
+                index = _weapons.Count - 1;
+            }
+
+            _choosenWeapon.gameObject.SetActive(false);
+            _choosenWeapon = _weapons[index];
+            _choosenWeapon.gameObject.SetActive(true);
+
         }
     }
 

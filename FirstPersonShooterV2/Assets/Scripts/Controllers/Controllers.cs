@@ -13,6 +13,7 @@ public class Controllers
         ServiceLocator.SetService<SelectionController>(new SelectionController());
         ServiceLocator.SetService<InventoryController>(new InventoryController());
         ServiceLocator.SetService<WeaponController>(new WeaponController());
+        ServiceLocator.SetService<BotsController>(new BotsController());
     }
 
     #endregion

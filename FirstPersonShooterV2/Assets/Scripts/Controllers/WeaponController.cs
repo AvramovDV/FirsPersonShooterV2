@@ -25,36 +25,22 @@ public class WeaponController : BaseController
 
     #region Methods
 
+
     public void Fire()
     {
-        if (_inventoryController.ChoosenWeapon == null)
+        if (_inventoryController.ChoosenWeapon != null)
         {
-            return;
-        }
-
-        if (IsActive)
-        {
-            Switch();
             _inventoryController.ChoosenWeapon.Fire();
-            if (_timeController != null)
-            {
-                _timeController.Off();
-            }
-                _timeController = new TimeController(Switch, 1 / _inventoryController.ChoosenWeapon.FireSpeed, false);
         }
-
     }
 
-    public void Wait(float time)
+    public void Reload()
     {
-        Off();
-        if (_timeController != null)
+        if (_inventoryController.ChoosenWeapon != null)
         {
-            _timeController.Off();
+            _inventoryController.ChoosenWeapon.Reload();
         }
-        _timeController = new TimeController(Switch, time, false);
     }
-
 
     #endregion
 }

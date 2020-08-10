@@ -30,6 +30,7 @@ public abstract class BaseWeaponModel : MonoBehaviour
     public float Damage { get => _damage; }
     public int MaxBullets { get => _maxBullets; }
     public int Bullets { get => _bullets; set => _bullets = value; }
+    public bool CanFire { get; set; } = true;
 
     #endregion
 
@@ -37,6 +38,7 @@ public abstract class BaseWeaponModel : MonoBehaviour
     #region Methods
 
     public abstract void Fire();
+    public abstract void Reload();
 
     #endregion
 }
