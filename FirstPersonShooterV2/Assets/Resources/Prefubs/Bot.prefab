@@ -125,7 +125,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _transform: {fileID: 7460387851510687264}
   _agent: {fileID: 7460387851510687267}
-  _animator: {fileID: 0}
   _health: 100
   _damage: 5
   _lookAroundTime: 2
@@ -133,7 +132,9 @@ MonoBehaviour:
   _walkSpeed: 0.3
   _runSpeed: 5
   _seingDistance: 20
-  _seingAngle: 35
+  _seingAngle: 60
+  _attackSpeed: 2
+  _attackDistance: 1
 --- !u!114 &8863913742266229183
 MonoBehaviour:
   m_ObjectHideFlags: 0

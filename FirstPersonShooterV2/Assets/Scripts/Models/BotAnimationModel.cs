@@ -52,6 +52,7 @@ public class BotAnimationModel : MonoBehaviour
         _animationsMachine.Add(BotState.LookLeft, () => _animator.SetTrigger(_animTurnLeft));
         _animationsMachine.Add(BotState.LookRight, () => _animator.SetTrigger(_animTurnRight));
         _animationsMachine.Add(BotState.Die, () => _animator.SetTrigger(_animFallingBack));
+        _animationsMachine.Add(BotState.Attack, () => _animator.SetTrigger(_animAttack));
     }
 
     private void SetAnimation()

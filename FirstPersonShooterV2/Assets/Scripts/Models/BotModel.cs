@@ -14,7 +14,6 @@ public class BotModel : MonoBehaviour
     //[SerializeField] private Rigidbody _botBody;
     //[SerializeField] private Rigidbody _botHead;
     //[SerializeField] private Rigidbody _botWeapon;
-    [SerializeField] private Animator _animator;
 
     [SerializeField] private float _health;
     [SerializeField] private float _damage;
@@ -26,9 +25,14 @@ public class BotModel : MonoBehaviour
     [SerializeField] private float _seingDistance;
     [SerializeField] private float _seingAngle;
 
+    [SerializeField] private float _attackSpeed;
+    [SerializeField] private float _attackDistance;
+
     private BotState _botSate = BotState.None;
 
     private Transform _playerTransform;
+
+    private PlayerModel _playerModel;
 
     private float _dieTime = 2f;
 
@@ -69,7 +73,8 @@ public class BotModel : MonoBehaviour
 
     private void Start()
     {
-        _playerTransform = FindObjectOfType<PlayerModel>().transform;
+        _playerModel = FindObjectOfType<PlayerModel>();
+        _playerTransform = _playerModel.transform;
     }
 
     #endregion
@@ -95,6 +100,7 @@ public class BotModel : MonoBehaviour
         _state.Add(BotState.LookLeft, LookLeft);
         _state.Add(BotState.TargetFollow, TargetFollow);
         _state.Add(BotState.Die, Die);
+        _state.Add(BotState.Attack, Attack);
     }
 
     public void SetDamage(float damage)
@@ -115,6 +121,14 @@ public class BotModel : MonoBehaviour
 
     private void None()
     {
+        //if (IsPlayerHere())
+        //{
+        //    SwitchState(BotState.TargetFollow);
+        //}
+        //else
+        //{
+            
+        //}
         LookAround();
     }
 
@@ -222,6 +236,10 @@ public class BotModel : MonoBehaviour
         if (IsPlayerHere())
         {
             _agent.SetDestination(_playerTransform.position);
+            if (_agent.remainingDistance < _attackDistance)
+            {
+                SwitchState(BotState.Attack);
+            }
         }
         else
         {
@@ -237,17 +255,36 @@ public class BotModel : MonoBehaviour
         {
             if (Vector3.Angle(_transform.forward, _playerTransform.position - _transform.position) < _seingAngle)
             {
-                if (!Physics.Linecast(_transform.position, _playerTransform.position))
+                RaycastHit hit;
+                if (Physics.Linecast(_transform.position + Vector3.up, _playerTransform.position + Vector3.up, out hit))
+                {
+                    if (hit.transform == _playerTransform)
+                    {
+                        res = true;
+                    }
+                }
+                else
                 {
                     res = true;
                 }
             }
         }
-
+       
         return res;
     }
 
-
+    private void Attack()
+    {
+        if (_localTimer < 1f)
+        {
+            _localTimer += _attackSpeed * Time.deltaTime;
+        }
+        else
+        {
+            _playerModel.GetComponent<ISetDamege>().SetDamage(_damage);
+            SwitchState(BotState.None);
+        }
+    }
 
     #endregion
 }

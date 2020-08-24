@@ -6,4 +6,5 @@
     LookLeft = 3,
     TargetFollow = 4,
     Die = 5,
+    Attack = 6
 }

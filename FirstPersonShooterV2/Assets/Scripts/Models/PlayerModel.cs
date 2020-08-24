@@ -2,7 +2,7 @@
 using UnityEngine;
 
 
-public class PlayerModel : MonoBehaviour
+public class PlayerModel : MonoBehaviour, ISetDamege
 {
     #region Fields
 
@@ -14,6 +14,7 @@ public class PlayerModel : MonoBehaviour
     [SerializeField] private float _mass;
     [SerializeField] private float _jump;
     [SerializeField] private float _rotationSpeed;
+    [SerializeField] private float _health;
 
     private float _minimumX = -90f;
     private float _maximumX = 90f;
@@ -64,6 +65,16 @@ public class PlayerModel : MonoBehaviour
         q.x = Mathf.Tan(0.5f * Mathf.Deg2Rad * angleX);
 
         return q;
+    }
+
+    #endregion
+
+
+    #region ISetDamage
+
+    public void SetDamage(float damage)
+    {
+        _health -= damage;
     }
 
     #endregion
